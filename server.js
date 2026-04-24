@@ -140,7 +140,37 @@ function shuffle(arr) {
 }
 
 // ========== GAME STATE ==========
+const fs = require('fs');
+const ROOMS_FILE = '/tmp/almala3b_rooms.json';
 const rooms = {};
+
+// تحميل غرف الـ waiting المحفوظة عند الـ restart
+function loadRooms() {
+  try {
+    if (!fs.existsSync(ROOMS_FILE)) return;
+    const data = JSON.parse(fs.readFileSync(ROOMS_FILE, 'utf8'));
+    const now = Date.now();
+    for (const [code, room] of Object.entries(data)) {
+      if (room.createdAt && now - room.createdAt > 3600000) continue; // أقدم من ساعة
+      if (room.state === 'waiting') rooms[code] = room;
+    }
+  } catch(e) {}
+}
+
+// حفظ غرف الـ waiting على الديسك
+function saveRooms() {
+  try {
+    const exportable = {};
+    for (const [code, room] of Object.entries(rooms)) {
+      if (room.state === 'waiting' && room.players.length > 0) {
+        exportable[code] = { ...room, pendingSpecial: null, deck: [], createdAt: room.createdAt || Date.now() };
+      }
+    }
+    fs.writeFileSync(ROOMS_FILE, JSON.stringify(exportable));
+  } catch(e) {}
+}
+
+loadRooms();
 
 function createRoom(code) {
   return {
@@ -283,6 +313,7 @@ io.on('connection', (socket) => {
     socket.data.name = playerName;
     socket.emit('room_created', { code });
     io.to(code).emit('players_update', { players: room.players.map(p => p.name) });
+    saveRooms();
   });
 
   // JOIN ROOM
@@ -299,6 +330,7 @@ io.on('connection', (socket) => {
     socket.data.name = playerName;
     socket.emit('room_joined', { code });
     io.to(code).emit('players_update', { players: room.players.map(p => p.name) });
+    saveRooms();
   });
 
   // ========== التعديل 3: إضافة زر START GAME ==========
@@ -347,6 +379,7 @@ io.on('connection', (socket) => {
       p._drawnThisTurn = 0;
     });
     io.to(code).emit('room_reset', { players: room.players.map(p => p.name) });
+    saveRooms();
   });
 
   // PLACE CARD
@@ -680,6 +713,7 @@ io.on('connection', (socket) => {
       io.to(code).emit('player_left', { msg: `${socket.data.name} غادر اللعبة` });
       broadcastState(room);
     }
+    saveRooms();
   });
 });
 
