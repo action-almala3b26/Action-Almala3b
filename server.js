@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/ping', (req, res) => res.send('ok'));
 
 // VAST proxy endpoint
-const VAST_URL = 'https://faithfuloccasion.com/dGmUFBzOd.G/N/vHZ/G/UY/reAmA9ruxZPU-lgkYPgT/YA5HN/jkEa5WM/z/catmNHjKk/2wMyTvky0cMQQr';
+const VAST_URL = 'https://faithfuloccasion.com/damWF/zXd.GSNjvGZ/GLUb/le/mz9QurZCUklgkSPjT/Ya5YOhDYc_zZNTTMMJtGN-jZkh4lNvzRMN1ENXwj';
 app.get('/vast', async (req, res) => {
   try {
     const https = require('https');
@@ -316,6 +316,8 @@ io.on('connection', (socket) => {
 
     room.state = 'playing';
     dealCards(room);
+    // reset counters لكل اللاعبين عند بداية اللعبة
+    room.players.forEach(p => { p._placedThisTurn = 0; p._drawnThisTurn = 0; });
     io.to(code).emit('game_started');
     broadcastState(room);
   });
@@ -341,6 +343,8 @@ io.on('connection', (socket) => {
       p.yellows = {};
       p.loanedCards = [];
       p.skipped = false;
+      p._placedThisTurn = 0;
+      p._drawnThisTurn = 0;
     });
     io.to(code).emit('room_reset', { players: room.players.map(p => p.name) });
   });
