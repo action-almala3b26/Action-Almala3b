@@ -961,26 +961,17 @@ function joinRoomWithAd() {
 
 function openPopUnder(url) {
   try {
-    var ghost = window.open('', '_blank', 'width=1,height=1,top=' + (screen.height + 100) + ',left=' + (screen.width + 100));
-    if (ghost) {
-      ghost.document.write('<html><body><script>' +
-        'var ad = window.open("' + url + '", "_blank");' +
-        'if(ad){' +
-        // فصل الـ opener عن الـ pop-under قبل ما نقفل الـ ghost
-        // عشان إغلاق الـ ghost ميأثرش على الـ pop-under
-        '  try{ ad.opener = null; }catch(x){}' +
-        '  ad.blur();' +
-        '}' +
-        'window.opener.focus();' +
-        // تأخير الإغلاق بعد ما الـ pop-under يتحمل ويتفصل
-        'setTimeout(function(){ window.close(); }, 1000);' +
-        '<\/script></body></html>');
-      ghost.document.close();
-    }
-  } catch(e) {
+    // افتح الـ pop-under مباشرة بدون ghost
     var w = window.open(url, '_blank');
-    if (w) { w.blur(); window.focus(); }
-  }
+    if (w) {
+      w.blur();
+      window.focus();
+      setTimeout(function() {
+        try { w.blur(); } catch(e) {}
+        try { window.focus(); } catch(e) {}
+      }, 100);
+    }
+  } catch(e) {}
 }
 
 function selectLanguage(lang) {
