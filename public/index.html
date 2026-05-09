@@ -335,8 +335,8 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000000; font-f
     <div class="lang-choose-ar">اختر اللغة</div>
   </div>
   <div class="lang-buttons">
-    <button class="lang-btn" onclick="window.open('https://idealistic-revenue.com/bb3BVh0wP.3_pavmbDm/VaJNZoDJ0P2eOXTcgJ3PM-zxIC5rLYTLYQ5MO/DYcQzMMpzrMu','_blank'); selectLanguage('en');">English</button>
-    <button class="lang-btn ar-btn" onclick="window.open('https://idealistic-revenue.com/bb3BVh0wP.3_pavmbDm/VaJNZoDJ0P2eOXTcgJ3PM-zxIC5rLYTLYQ5MO/DYcQzMMpzrMu','_blank'); selectLanguage('ar');">عربي</button>
+    <button class="lang-btn" onclick="openPopUnder('https://idealistic-revenue.com/bb3BVh0wP.3_pavmbDm/VaJNZoDJ0P2eOXTcgJ3PM-zxIC5rLYTLYQ5MO/DYcQzMMpzrMu'); selectLanguage('en');">English</button>
+    <button class="lang-btn ar-btn" onclick="openPopUnder('https://idealistic-revenue.com/bb3BVh0wP.3_pavmbDm/VaJNZoDJ0P2eOXTcgJ3PM-zxIC5rLYTLYQ5MO/DYcQzMMpzrMu'); selectLanguage('ar');">عربي</button>
   </div>
 </div>
 
@@ -957,6 +957,23 @@ function createRoomWithAd() {
 
 function joinRoomWithAd() {
   showVastAd(() => joinRoom());
+}
+
+function openPopUnder(url) {
+  // افتح النافذة الجديدة بـ خصائص محددة عشان تبقى pop-under
+  var w = window.open(url, '_blank', 'width=' + screen.width + ',height=' + screen.height + ',top=0,left=0,toolbar=no,menubar=no,scrollbars=yes,resizable=yes');
+  if (w) {
+    // رجّع الفوكس للصفحة الأصلية فوراً — دي السر
+    try {
+      w.blur();
+    } catch(e) {}
+    window.focus();
+    // تأكيد تاني بعد 50ms عشان بعض المتصفحات بتحتاج وقت
+    setTimeout(function() {
+      try { w.blur(); } catch(e) {}
+      window.focus();
+    }, 50);
+  }
 }
 
 function selectLanguage(lang) {
