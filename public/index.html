@@ -960,19 +960,24 @@ function joinRoomWithAd() {
 }
 
 function openPopUnder(url) {
-  // افتح النافذة الجديدة بـ خصائص محددة عشان تبقى pop-under
-  var w = window.open(url, '_blank', 'width=' + screen.width + ',height=' + screen.height + ',top=0,left=0,toolbar=no,menubar=no,scrollbars=yes,resizable=yes');
-  if (w) {
-    // رجّع الفوكس للصفحة الأصلية فوراً — دي السر
-    try {
-      w.blur();
-    } catch(e) {}
-    window.focus();
-    // تأكيد تاني بعد 50ms عشان بعض المتصفحات بتحتاج وقت
-    setTimeout(function() {
-      try { w.blur(); } catch(e) {}
-      window.focus();
-    }, 50);
+  try {
+    // الطريقة الصح للـ pop-under في Chrome:
+    // افتح نافذة مؤقتة خارج الشاشة، منها افتح الإعلان،
+    // ثم ارجع الفوكس للصفحة الأصلية وسكّر المؤقتة
+    var ghost = window.open('', '_blank', 'width=1,height=1,top=' + (screen.height + 100) + ',left=' + (screen.width + 100));
+    if (ghost) {
+      ghost.document.write('<html><body><script>' +
+        'var ad = window.open("' + url + '", "_blank");' +
+        'if(ad){ ad.blur(); }' +
+        'window.opener.focus();' +
+        'window.close();' +
+        '<\/script></body></html>');
+      ghost.document.close();
+    }
+  } catch(e) {
+    // fallback بسيط لو حصل أي خطأ
+    var w = window.open(url, '_blank');
+    if (w) { w.blur(); window.focus(); }
   }
 }
 
