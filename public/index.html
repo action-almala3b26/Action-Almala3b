@@ -299,6 +299,81 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000000; font-f
 /* Action bar 2p */
 #action-bar-2p { display:none; }
 #deckPile.drawn2 { opacity:0.4; pointer-events:none; border-color:rgba(255,255,255,0.2) !important; color:rgba(255,255,255,0.3) !important; }
+
+/* ══════════════════════════════════════════
+   GAME-ONLY VISUAL EFFECTS
+══════════════════════════════════════════ */
+
+/* كارت يتحط — bounce in */
+@keyframes cardPlace {
+  0%   { transform:scale(0.3) translateY(-15px); opacity:0; }
+  60%  { transform:scale(1.18) translateY(0);    opacity:1; }
+  80%  { transform:scale(0.94); }
+  100% { transform:scale(1);    opacity:1; }
+}
+.card-placed { animation:cardPlace 0.32s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+/* hover 3D على form-card */
+.form-card { transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s; transform-style:preserve-3d; will-change:transform; }
+.form-card:hover { transform:translateY(-5px) rotateX(7deg) scale(1.1); z-index:8; box-shadow:0 8px 20px rgba(0,0,0,0.8), 0 0 12px rgba(255,255,255,0.07) !important; }
+
+/* shine overlay على form-card */
+.form-card::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.13) 0%,transparent 55%,rgba(0,0,0,0.15) 100%); pointer-events:none; z-index:3; border-radius:5px; }
+
+/* hover 3D على hand-card */
+.hand-card { transition:transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s; transform-style:preserve-3d; will-change:transform; }
+.hand-card:hover { transform:translateY(-10px) rotateX(8deg) scale(1.06); z-index:10; }
+.hand-card.selected { transform:translateY(-14px) rotateX(10deg) scale(1.1) !important; box-shadow:0 0 0 2px #00e5ff, 0 0 20px rgba(0,229,255,0.7), 0 8px 20px rgba(0,0,0,0.8) !important; }
+.hand-card::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.12) 0%,transparent 50%); pointer-events:none; z-index:3; border-radius:6px; }
+
+/* selected-form glow أقوى */
+.form-card.selected-form { transform:translateY(-5px) scale(1.1) !important; box-shadow:0 0 0 2px #00e5ff, 0 0 18px rgba(0,229,255,0.7), 0 4px 12px rgba(0,0,0,0.7) !important; }
+
+/* captain card — gold glow نابض */
+.form-card.captain-card { animation:captainPulse 2s ease-in-out infinite; }
+@keyframes captainPulse {
+  0%,100% { box-shadow:0 0 0 1px rgba(255,215,0,0.5), 0 0 8px rgba(255,215,0,0.3), 0 2px 8px rgba(0,0,0,0.7); }
+  50%      { box-shadow:0 0 0 2px rgba(255,215,0,0.9), 0 0 18px rgba(255,215,0,0.6), 0 2px 8px rgba(0,0,0,0.7); }
+}
+
+/* turn badge — نبض لما دورك */
+.turn-badge.my-turn-pulse { animation:myTurnPulse 1.4s ease-in-out infinite; background:rgba(255,215,0,0.15) !important; border-color:rgba(255,215,0,0.6) !important; color:#ffd700 !important; }
+@keyframes myTurnPulse {
+  0%,100% { box-shadow:none; }
+  50%      { box-shadow:0 0 14px rgba(255,215,0,0.5); }
+}
+
+/* pitch glow لما دورك */
+#pitch-bg.my-turn-glow { animation:pitchGlow 2.5s ease-in-out infinite; }
+@keyframes pitchGlow {
+  0%,100% { filter:brightness(1) saturate(1); }
+  50%      { filter:brightness(1.12) saturate(1.3); }
+}
+
+/* particle burst */
+.particle { position:fixed; width:6px; height:6px; border-radius:50%; pointer-events:none; z-index:9999; animation:particleFly 0.65s ease-out forwards; }
+@keyframes particleFly { 0%{transform:translate(0,0) scale(1);opacity:1;} 100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;} }
+
+/* screen flash لما special card */
+.fx-flash { position:fixed; inset:0; z-index:8888; pointer-events:none; }
+.fx-flash.red  { animation:flashRed  0.4s ease-out forwards; }
+.fx-flash.cyan { animation:flashCyan 0.4s ease-out forwards; }
+.fx-flash.gold { animation:flashGold 0.4s ease-out forwards; }
+@keyframes flashRed  { 0%{background:rgba(255,45,85,0);}  30%{background:rgba(255,45,85,0.2);}  100%{background:rgba(255,45,85,0);} }
+@keyframes flashCyan { 0%{background:rgba(0,229,255,0);} 30%{background:rgba(0,229,255,0.15);} 100%{background:rgba(0,229,255,0);} }
+@keyframes flashGold { 0%{background:rgba(255,215,0,0);} 30%{background:rgba(255,215,0,0.15);} 100%{background:rgba(255,215,0,0);} }
+
+/* float text */
+.float-txt { position:fixed; font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; pointer-events:none; z-index:9999; animation:floatUp 0.9s ease-out forwards; }
+@keyframes floatUp { 0%{opacity:1;transform:translateY(0);} 100%{opacity:0;transform:translateY(-44px);} }
+
+/* turn sweep */
+.turn-sweep { position:fixed; inset:0; z-index:8887; pointer-events:none; background:linear-gradient(90deg,transparent,rgba(0,229,255,0.07),transparent); animation:sweepAnim 0.55s ease-out forwards; }
+@keyframes sweepAnim { 0%{transform:translateX(-100%);} 100%{transform:translateX(100%);} }
+
+/* win confetti */
+.confetti-p { position:fixed; pointer-events:none; z-index:9998; animation:cfFall linear forwards; }
+@keyframes cfFall { 0%{transform:translateY(-10px) rotate(0deg);opacity:1;} 100%{transform:translateY(110vh) rotate(540deg);opacity:0;} }
 </style>
 </head>
 <body>
@@ -335,8 +410,8 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000000; font-f
     <div class="lang-choose-ar">اختر اللغة</div>
   </div>
   <div class="lang-buttons">
-    <button class="lang-btn" onclick="openPopUnder('https://idealistic-revenue.com/bb3BVh0wP.3_pavmbDm/VaJNZoDJ0P2eOXTcgJ3PM-zxIC5rLYTLYQ5MO/DYcQzMMpzrMu'); selectLanguage('en');">English</button>
-    <button class="lang-btn ar-btn" onclick="openPopUnder('https://idealistic-revenue.com/bb3BVh0wP.3_pavmbDm/VaJNZoDJ0P2eOXTcgJ3PM-zxIC5rLYTLYQ5MO/DYcQzMMpzrMu'); selectLanguage('ar');">عربي</button>
+    <button class="lang-btn" onclick="window.open('https://idealistic-revenue.com/bb3BVh0wP.3_pavmbDm/VaJNZoDJ0P2eOXTcgJ3PM-zxIC5rLYTLYQ5MO/DYcQzMMpzrMu','_blank'); selectLanguage('en');">English</button>
+    <button class="lang-btn ar-btn" onclick="window.open('https://idealistic-revenue.com/bb3BVh0wP.3_pavmbDm/VaJNZoDJ0P2eOXTcgJ3PM-zxIC5rLYTLYQ5MO/DYcQzMMpzrMu','_blank'); selectLanguage('ar');">عربي</button>
   </div>
 </div>
 
@@ -957,21 +1032,6 @@ function createRoomWithAd() {
 
 function joinRoomWithAd() {
   showVastAd(() => joinRoom());
-}
-
-function openPopUnder(url) {
-  try {
-    // افتح الـ pop-under مباشرة بدون ghost
-    var w = window.open(url, '_blank');
-    if (w) {
-      w.blur();
-      window.focus();
-      setTimeout(function() {
-        try { w.blur(); } catch(e) {}
-        try { window.focus(); } catch(e) {}
-      }, 100);
-    }
-  } catch(e) {}
 }
 
 function selectLanguage(lang) {
@@ -2074,6 +2134,31 @@ function showToast(msg,isError=false){
 function closeError(){
   document.getElementById('errorPopup').classList.remove('show');
 }
+
+/* ══════ GAME EFFECTS ══════ */
+function spawnParticles(x,y,color,count){for(let i=0;i<(count||8);i++){const p=document.createElement('div');p.className='particle';const a=(i/(count||8))*Math.PI*2;const d=28+Math.random()*36;p.style.cssText=`left:${x}px;top:${y}px;background:${color||'#00e5ff'};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;`;document.body.appendChild(p);setTimeout(()=>p.remove(),700);}}
+function fxFlash(type){const el=document.createElement('div');el.className='fx-flash '+(type||'cyan');document.body.appendChild(el);setTimeout(()=>el.remove(),450);}
+function fxFloat(text,x,y,color){const el=document.createElement('div');el.className='float-txt';el.style.cssText=`left:${x}px;top:${y}px;color:${color||'#00e5ff'};text-shadow:0 0 8px ${color||'#00e5ff'};`;el.textContent=text;document.body.appendChild(el);setTimeout(()=>el.remove(),1000);}
+function fxSweep(){const el=document.createElement('div');el.className='turn-sweep';document.body.appendChild(el);setTimeout(()=>el.remove(),600);}
+function fxConfetti(){const cols=['#ffd700','#00e5ff','#ff2d55','#00e676','#ff9500','#fff'];for(let i=0;i<55;i++){setTimeout(()=>{const c=document.createElement('div');c.className='confetti-p';const col=cols[Math.floor(Math.random()*cols.length)];const x=Math.random()*window.innerWidth;const dur=1.4+Math.random()*1.8;const sz=5+Math.random()*7;c.style.cssText=`left:${x}px;top:-15px;width:${sz}px;height:${sz}px;background:${col};border-radius:${Math.random()>0.5?'50%':'2px'};animation-duration:${dur}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),dur*1000+100);},i*38);}}
+function fxCardPlaced(rowId){const row=document.getElementById(rowId);if(!row)return;const cards=row.querySelectorAll('.form-card');const last=cards[cards.length-1];if(!last)return;last.classList.remove('card-placed');void last.offsetWidth;last.classList.add('card-placed');const r=last.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const zc={GK:'#f5a623',DEF:'#4a90d9',MID:'#27ae60',ATK:'#e74c3c',JOKER:'#8e44ad'};const zone=rowId.replace('my-row-','').replace('opp-row-','');spawnParticles(cx,cy,zc[zone]||'#00e5ff',7);fxFloat('✓',cx-6,cy-12,zc[zone]||'#00e5ff');}
+
+const _origRG=renderGame;
+renderGame=function(){const _was=isMyTurn;_origRG.apply(this,arguments);const pb=document.getElementById('pitch-bg');const tb=document.getElementById('turnIndicator');if(isMyTurn){pb&&pb.classList.add('my-turn-glow');tb&&tb.classList.add('my-turn-pulse');}else{pb&&pb.classList.remove('my-turn-glow');tb&&tb.classList.remove('my-turn-pulse');}};
+
+socket.on('your_turn_start',()=>setTimeout(fxSweep,60));
+
+const _wObs=new MutationObserver(()=>{const ws=document.getElementById('win-screen');if(ws&&ws.classList.contains('show'))setTimeout(fxConfetti,150);});
+_wObs.observe(document.getElementById('win-screen'),{attributes:true,attributeFilter:['class']});
+
+const _origTS=trackSpecialPlayed;
+trackSpecialPlayed=function(card){_origTS.apply(this,arguments);if(!card)return;const fm={'Red Card':'red','Yellow Card':'gold','Offside':'cyan','Swap':'cyan','Contract':'gold','Loan':'cyan','Trash Player':'red','Cancel Order':'cyan'};const ft=fm[card.name];if(ft)fxFlash(ft);};
+
+const _origRMF2=renderMyFormation;
+renderMyFormation=function(){const bef={};['GK','DEF','MID','ATK'].forEach(z=>{bef[z]=(myField[z]||[]).length;});_origRMF2.apply(this,arguments);['GK','DEF','MID','ATK'].forEach(z=>{if((myField[z]||[]).length>bef[z])fxCardPlaced('my-row-'+z);});};
+
+const _origROF2=renderOppFormation;
+renderOppFormation=function(){const opp=opponents[0];const bef={};if(opp)['GK','DEF','MID','ATK'].forEach(z=>{bef[z]=(opp.field[z]||[]).length;});_origROF2.apply(this,arguments);if(opp)['GK','DEF','MID','ATK'].forEach(z=>{if((opp.field[z]||[]).length>(bef[z]||0))fxCardPlaced('opp-row-'+z);});};
 
 
 </script>
