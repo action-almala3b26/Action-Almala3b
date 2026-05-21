@@ -329,12 +329,8 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000000; font-f
 /* selected-form glow أقوى */
 .form-card.selected-form { transform:translateY(-5px) scale(1.1) !important; box-shadow:0 0 0 2px #00e5ff, 0 0 18px rgba(0,229,255,0.7), 0 4px 12px rgba(0,0,0,0.7) !important; }
 
-/* captain card — gold glow نابض */
-.form-card.captain-card { animation:captainPulse 2s ease-in-out infinite; }
-@keyframes captainPulse {
-  0%,100% { box-shadow:0 0 0 1px rgba(255,215,0,0.5), 0 0 8px rgba(255,215,0,0.3), 0 2px 8px rgba(0,0,0,0.7); }
-  50%      { box-shadow:0 0 0 2px rgba(255,215,0,0.9), 0 0 18px rgba(255,215,0,0.6), 0 2px 8px rgba(0,0,0,0.7); }
-}
+/* captain card — border ذهبي بس بدون animation */
+.form-card.captain-card { border-color:rgba(255,215,0,0.7) !important; }
 
 /* turn badge — نبض لما دورك */
 .turn-badge.my-turn-pulse { animation:myTurnPulse 1.4s ease-in-out infinite; background:rgba(255,215,0,0.15) !important; border-color:rgba(255,215,0,0.6) !important; color:#ffd700 !important; }
@@ -374,6 +370,147 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000000; font-f
 /* win confetti */
 .confetti-p { position:fixed; pointer-events:none; z-index:9998; animation:cfFall linear forwards; }
 @keyframes cfFall { 0%{transform:translateY(-10px) rotate(0deg);opacity:1;} 100%{transform:translateY(110vh) rotate(540deg);opacity:0;} }
+
+/* ══ FLYING CARD ══ */
+.flying-card {
+  position:fixed; z-index:9990; pointer-events:none;
+  border-radius:6px; overflow:hidden;
+  border:1.5px solid rgba(255,255,255,0.3);
+  box-shadow:0 8px 30px rgba(0,0,0,0.9);
+  transition:none;
+}
+@keyframes flyToField {
+  0%   { transform:scale(1) rotate(0deg);    opacity:1; }
+  50%  { transform:scale(0.85) rotate(-8deg); opacity:1; }
+  85%  { transform:scale(1.15) rotate(2deg);  opacity:1; }
+  100% { transform:scale(1) rotate(0deg);    opacity:0; }
+}
+/* impact shake on target */
+@keyframes impactShake {
+  0%,100% { transform:scale(1); }
+  25%  { transform:scale(1.12) rotate(-2deg); }
+  50%  { transform:scale(0.95) rotate(1deg); }
+  75%  { transform:scale(1.06) rotate(-1deg); }
+}
+.card-impact { animation:impactShake 0.3s ease-out both; }
+
+/* ══ BURNED ZONE EXPANDED ══ */
+#burned-zone {
+  flex-shrink:0; order:-1;
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:flex-end; padding:4px 4px 4px 6px;
+  border-right:1px solid rgba(255,80,80,0.25);
+  min-width:52px; max-width:52px;
+}
+#burned-stack { position:relative; width:38px; height:54px; cursor:pointer; }
+#burned-stack:hover .burned-tooltip { display:flex; }
+.burned-tooltip {
+  display:none; position:fixed; bottom:90px; left:6px; z-index:9995;
+  flex-direction:column; gap:4px;
+  background:rgba(5,10,18,0.97); border:1px solid rgba(255,80,80,0.3);
+  border-radius:10px; padding:8px; max-height:60vh; overflow-y:auto;
+  box-shadow:0 8px 30px rgba(0,0,0,0.9); min-width:200px; max-width:260px;
+}
+.burned-tooltip-title {
+  font-size:9px; color:rgba(255,100,100,0.8); letter-spacing:2px;
+  font-family:'Orbitron',sans-serif; margin-bottom:4px; text-align:center;
+}
+.bt-row {
+  display:flex; align-items:center; gap:8px;
+  padding:5px 6px; border-radius:6px;
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+}
+.bt-card { width:30px; height:42px; border-radius:5px; position:relative; flex-shrink:0; overflow:hidden; border:1px solid rgba(255,255,255,0.15); }
+.bt-info { flex:1; min-width:0; }
+.bt-name { font-size:11px; color:#fff; font-weight:700; font-family:'Tajawal',sans-serif; }
+.bt-from { font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px; }
+.bt-why  { font-size:10px; margin-top:2px; }
+
+/* ══ CHAT ══ */
+#chat-toggle {
+  position:fixed; bottom:90px; right:10px; z-index:500;
+  width:40px; height:40px; border-radius:50%;
+  background:rgba(0,229,255,0.15); border:1.5px solid rgba(0,229,255,0.4);
+  display:none; align-items:center; justify-content:center;
+  font-size:18px; cursor:pointer; transition:all 0.2s;
+  box-shadow:0 0 12px rgba(0,229,255,0.2);
+}
+#chat-toggle:hover { background:rgba(0,229,255,0.25); }
+#chat-toggle.has-unread::after {
+  content:''; position:absolute; top:2px; right:2px;
+  width:10px; height:10px; border-radius:50%;
+  background:#ff2d55; border:2px solid #000;
+  animation:dotBlink 1s infinite;
+}
+@keyframes dotBlink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+#chat-box {
+  position:fixed; bottom:85px; right:10px; z-index:600;
+  width:240px; background:rgba(5,10,18,0.97);
+  border:1px solid rgba(0,229,255,0.2); border-radius:12px;
+  display:none; flex-direction:column;
+  box-shadow:0 8px 30px rgba(0,0,0,0.8);
+  overflow:hidden;
+}
+#chat-box.open { display:flex; }
+.chat-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.06);
+  font-family:'Orbitron',sans-serif; font-size:10px; color:rgba(0,229,255,0.8);
+  letter-spacing:2px;
+}
+.chat-close { background:none; border:none; color:rgba(255,255,255,0.4); font-size:18px; cursor:pointer; line-height:1; }
+.chat-close:hover { color:#fff; }
+#chat-messages {
+  flex:1; overflow-y:auto; padding:8px; display:flex;
+  flex-direction:column; gap:6px; max-height:180px;
+  scrollbar-width:none;
+}
+#chat-messages::-webkit-scrollbar { display:none; }
+.chat-msg {
+  font-size:12px; line-height:1.5; padding:6px 9px;
+  border-radius:8px; max-width:90%; word-break:break-word;
+  font-family:'Tajawal',sans-serif;
+}
+.chat-msg.mine {
+  background:rgba(0,229,255,0.12); border:1px solid rgba(0,229,255,0.2);
+  color:#e8eef8; align-self:flex-end; border-radius:8px 2px 8px 8px;
+}
+.chat-msg.theirs {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
+  color:#e8eef8; align-self:flex-start; border-radius:2px 8px 8px 8px;
+}
+.chat-msg.system {
+  background:transparent; color:rgba(255,215,0,0.6);
+  font-size:10px; text-align:center; align-self:center; border:none; padding:2px 0;
+}
+.chat-msg .msg-sender { font-size:9px; color:rgba(255,255,255,0.4); margin-bottom:2px; }
+.chat-input-row {
+  display:flex; gap:0; border-top:1px solid rgba(255,255,255,0.06);
+}
+#chat-input {
+  flex:1; background:rgba(255,255,255,0.04); border:none; outline:none;
+  color:#fff; font-family:'Tajawal',sans-serif; font-size:13px;
+  padding:9px 10px;
+}
+#chat-input::placeholder { color:rgba(255,255,255,0.25); }
+#chat-send {
+  background:rgba(0,229,255,0.15); border:none; border-left:1px solid rgba(0,229,255,0.2);
+  color:#00e5ff; font-size:16px; padding:0 12px; cursor:pointer; transition:background 0.15s;
+}
+#chat-send:hover { background:rgba(0,229,255,0.25); }
+
+/* quick emoji reactions */
+.chat-reactions {
+  display:flex; gap:4px; padding:5px 8px;
+  border-top:1px solid rgba(255,255,255,0.04); flex-wrap:wrap;
+}
+.react-btn {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px; padding:3px 8px; font-size:12px; cursor:pointer;
+  transition:background 0.15s; color:#fff;
+}
+.react-btn:hover { background:rgba(255,255,255,0.12); }
 </style>
 </head>
 <body>
@@ -1509,8 +1646,8 @@ function renderGame(){
     document.getElementById('middle-zone-old').style.display='';
     document.getElementById('my-section-old').style.display='';
     const pb=document.getElementById('pitch-bg'); if(pb) pb.style.display='none';
-    // إخفاء منطقة المحروق في الثلاثي والرباعي
-    const bz=document.getElementById('burned-zone'); if(bz) bz.style.display='none';
+    // إظهار منطقة المحروق في الثلاثي والرباعي كمان
+    const bz=document.getElementById('burned-zone'); if(bz){ bz.style.display='flex'; }
 
     const endBtn2=document.getElementById('endTurnBtn2');
     if(endBtn2){
@@ -2135,35 +2272,367 @@ function closeError(){
   document.getElementById('errorPopup').classList.remove('show');
 }
 
-/* ══════ GAME EFFECTS ══════ */
+/* ══════════════════════════════════════════
+   GAME EFFECTS
+══════════════════════════════════════════ */
+
+// Particles
 function spawnParticles(x,y,color,count){for(let i=0;i<(count||8);i++){const p=document.createElement('div');p.className='particle';const a=(i/(count||8))*Math.PI*2;const d=28+Math.random()*36;p.style.cssText=`left:${x}px;top:${y}px;background:${color||'#00e5ff'};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;`;document.body.appendChild(p);setTimeout(()=>p.remove(),700);}}
 function fxFlash(type){const el=document.createElement('div');el.className='fx-flash '+(type||'cyan');document.body.appendChild(el);setTimeout(()=>el.remove(),450);}
 function fxFloat(text,x,y,color){const el=document.createElement('div');el.className='float-txt';el.style.cssText=`left:${x}px;top:${y}px;color:${color||'#00e5ff'};text-shadow:0 0 8px ${color||'#00e5ff'};`;el.textContent=text;document.body.appendChild(el);setTimeout(()=>el.remove(),1000);}
 function fxSweep(){const el=document.createElement('div');el.className='turn-sweep';document.body.appendChild(el);setTimeout(()=>el.remove(),600);}
 function fxConfetti(){const cols=['#ffd700','#00e5ff','#ff2d55','#00e676','#ff9500','#fff'];for(let i=0;i<55;i++){setTimeout(()=>{const c=document.createElement('div');c.className='confetti-p';const col=cols[Math.floor(Math.random()*cols.length)];const x=Math.random()*window.innerWidth;const dur=1.4+Math.random()*1.8;const sz=5+Math.random()*7;c.style.cssText=`left:${x}px;top:-15px;width:${sz}px;height:${sz}px;background:${col};border-radius:${Math.random()>0.5?'50%':'2px'};animation-duration:${dur}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),dur*1000+100);},i*38);}}
-function fxCardPlaced(rowId){const row=document.getElementById(rowId);if(!row)return;const cards=row.querySelectorAll('.form-card');const last=cards[cards.length-1];if(!last)return;last.classList.remove('card-placed');void last.offsetWidth;last.classList.add('card-placed');const r=last.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const zc={GK:'#f5a623',DEF:'#4a90d9',MID:'#27ae60',ATK:'#e74c3c',JOKER:'#8e44ad'};const zone=rowId.replace('my-row-','').replace('opp-row-','');spawnParticles(cx,cy,zc[zone]||'#00e5ff',7);fxFloat('✓',cx-6,cy-12,zc[zone]||'#00e5ff');}
 
+/* ══ FLYING CARD ANIMATION ══
+   cardEl = DOM element of the hand card
+   targetRowId = e.g. 'my-row-DEF'
+   zone = 'DEF' etc
+*/
+function flyCardToField(cardEl, targetRowId, zone, cb){
+  if(!cardEl){ if(cb)cb(); return; }
+  const srcR = cardEl.getBoundingClientRect();
+
+  // snapshot clone
+  const clone = cardEl.cloneNode(true);
+  clone.className = 'flying-card';
+  clone.style.cssText = `
+    width:${srcR.width}px; height:${srcR.height}px;
+    left:${srcR.left}px; top:${srcR.top}px;
+    background:${cardEl.style.background||''};
+    will-change:transform,left,top,opacity;
+  `;
+  // copy background image if img child
+  const img = cardEl.querySelector('img');
+  if(img){ const ci=clone.querySelector('img'); if(ci) ci.src=img.src; }
+  document.body.appendChild(clone);
+
+  // find target position — the row center
+  const row = document.getElementById(targetRowId);
+  let tx = window.innerWidth/2, ty = window.innerHeight/2;
+  if(row){
+    const rr = row.getBoundingClientRect();
+    tx = rr.left + rr.width/2 - srcR.width/2;
+    ty = rr.top  + rr.height/2 - srcR.height/2;
+  }
+
+  const dur = 320; // ms
+  const startTime = performance.now();
+  const sx = srcR.left, sy = srcR.top;
+
+  function step(now){
+    const prog = Math.min((now - startTime)/dur, 1);
+    // ease out cubic
+    const ease = 1 - Math.pow(1-prog, 3);
+    const cx2 = sx + (tx-sx)*ease;
+    const cy2 = sy + (ty-sy)*ease;
+    // arc — goes up a bit in the middle
+    const arc = Math.sin(prog*Math.PI)*(-40);
+    const sc = 1 - prog*0.35;
+    clone.style.left = cx2+'px';
+    clone.style.top  = (cy2+arc)+'px';
+    clone.style.transform = `scale(${sc}) rotate(${prog*-10}deg)`;
+    clone.style.opacity = prog>0.85 ? (1-(prog-0.85)/0.15) : '1';
+    if(prog<1){ requestAnimationFrame(step); }
+    else{
+      clone.remove();
+      // impact on last placed card
+      if(row){
+        const cards = row.querySelectorAll('.form-card');
+        const last = cards[cards.length-1];
+        if(last){ last.classList.remove('card-impact'); void last.offsetWidth; last.classList.add('card-impact'); setTimeout(()=>last.classList.remove('card-impact'),350); }
+        // particles at target
+        const zc={GK:'#f5a623',DEF:'#4a90d9',MID:'#27ae60',ATK:'#e74c3c',JOKER:'#8e44ad'};
+        if(row){const rr2=row.getBoundingClientRect();spawnParticles(rr2.left+rr2.width/2,rr2.top+rr2.height/2,zc[zone]||'#00e5ff',7);}
+      }
+      if(cb)cb();
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+// store last selected card DOM element for flying animation
+let _lastSelectedCardEl = null;
+let _lastSelectedCard = null;
+
+/* ══ BURNED ZONE — FULL (كل الكروت) ══ */
+function buildBurnedCardEl(card, size){
+  // size: 'sm' = 30x42, 'md' = 38x54
+  const w = size==='sm'?30:38, h = size==='sm'?42:54;
+  const el = document.createElement('div');
+  el.style.cssText = `width:${w}px;height:${h}px;border-radius:5px;position:relative;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(255,80,80,0.5);background:${getCardBg(card)};`;
+  if(card.type==='player'){
+    const img=getPlayerImage(card);
+    if(img){const im=document.createElement('img');im.src=img;im.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;';el.appendChild(im);}
+    if(!card.joker&&card.number){const n=document.createElement('span');n.style.cssText='position:absolute;top:1px;left:2px;font-size:9px;font-weight:900;color:#fff;text-shadow:0 0 4px #000;z-index:5;font-family:Orbitron,sans-serif;';n.textContent=card.number;el.appendChild(n);}
+  } else {
+    const n=document.createElement('span');n.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-align:center;padding:2px;font-family:Tajawal,sans-serif;font-weight:700;z-index:5;line-height:1.2;';
+    n.textContent=currentLang==='ar'?t(card.name||''):card.name||'?';el.appendChild(n);
+  }
+  const fl=document.createElement('div');
+  fl.style.cssText='position:absolute;bottom:0;left:0;right:0;background:rgba(160,0,0,0.85);font-size:5px;text-align:center;color:#fff;padding:1px;z-index:6;';
+  fl.textContent=card.burnedBy==='red'?'🔴':card.burnedBy==='yellow2'?'🟡🟡':card.type==='special'?'⚡':'🔥';
+  el.appendChild(fl);
+  return el;
+}
+
+function renderBurnedZone(){
+  const zone=document.getElementById('burned-zone');
+  if(!zone)return;
+  zone.innerHTML='<div style="font-size:7px;color:rgba(255,100,100,0.9);text-shadow:0 1px 3px #000;text-align:center;font-family:Tajawal,sans-serif;line-height:1;margin-bottom:2px;">🔥</div>';
+
+  const items=[...gameBurnedPile,...((window._lastSpecialCards)||[])];
+
+  // Stack element — shows top card + click to expand
+  const stackEl=document.createElement('div');
+  stackEl.id='burned-stack';
+  stackEl.style.cssText='position:relative;width:38px;height:54px;cursor:pointer;';
+  zone.appendChild(stackEl);
+
+  if(items.length===0){ zone.appendChild(Object.assign(document.createElement('div'),{style:'font-size:8px;color:rgba(255,255,255,0.15);text-align:center;margin-top:2px;',textContent:'—'})); return; }
+
+  // Top card (last item)
+  const top=items[items.length-1];
+  const topEl=buildBurnedCardEl(top,'md');
+  topEl.style.position='absolute'; topEl.style.inset='0';
+  stackEl.appendChild(topEl);
+
+  // Stack count badge
+  if(items.length>1){
+    const badge=document.createElement('div');
+    badge.style.cssText='position:absolute;top:-5px;right:-5px;background:#ff2d55;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-family:Orbitron,sans-serif;font-weight:900;display:flex;align-items:center;justify-content:center;z-index:10;border:1.5px solid #000;';
+    badge.textContent=items.length;
+    stackEl.appendChild(badge);
+  }
+
+  // Tooltip on hover — shows all cards
+  const tooltip=document.createElement('div');
+  tooltip.className='burned-tooltip';
+  const ttitle=document.createElement('div'); ttitle.className='burned-tooltip-title';
+  ttitle.textContent=currentLang==='ar'?'🔥 الكروت المحروقة':'🔥 BURNED';
+  tooltip.appendChild(ttitle);
+
+  // show newest first
+  [...items].reverse().forEach(card=>{
+    const row=document.createElement('div'); row.className='bt-row';
+    const mini=buildBurnedCardEl(card,'sm'); row.appendChild(mini);
+    const info=document.createElement('div'); info.className='bt-info';
+    let name='';
+    if(card.type==='player'&&!card.joker) name=(card.zone||'')+(card.number?' #'+card.number:'');
+    else if(card.joker) name='Gullit ⭐';
+    else name=currentLang==='ar'?t(card.name||''):card.name||'?';
+    const nm=document.createElement('div'); nm.className='bt-name'; nm.textContent=name;
+    const fr=document.createElement('div'); fr.className='bt-from';
+    fr.textContent=(card.burnedFrom||'')?(currentLang==='ar'?'من: ':'from: ')+(card.burnedFrom):'';
+    const wy=document.createElement('div'); wy.className='bt-why';
+    wy.textContent=card.burnedBy==='red'?'🔴 Red Card':card.burnedBy==='yellow2'?'🟡🟡 2 Yellows':card.type==='special'?'⚡ Special':'🔥 Overflow';
+    info.appendChild(nm); if(fr.textContent)info.appendChild(fr); info.appendChild(wy);
+    row.appendChild(info); tooltip.appendChild(row);
+  });
+  stackEl.appendChild(tooltip);
+}
+
+/* ══ CHAT ══ */
+let chatOpen=false, chatUnread=0;
+
+function toggleChat(){
+  chatOpen=!chatOpen;
+  const box=document.getElementById('chat-box');
+  const btn=document.getElementById('chat-toggle');
+  if(chatOpen){
+    box.classList.add('open');
+    btn.classList.remove('has-unread');
+    chatUnread=0;
+    setTimeout(()=>{ const m=document.getElementById('chat-messages'); if(m)m.scrollTop=m.scrollHeight; },50);
+  } else {
+    box.classList.remove('open');
+  }
+}
+
+function addChatMsg(sender, text, mine, system){
+  const msgs=document.getElementById('chat-messages'); if(!msgs)return;
+  const div=document.createElement('div');
+  div.className='chat-msg '+(system?'system':mine?'mine':'theirs');
+  if(!system&&!mine&&sender){const s=document.createElement('div');s.className='msg-sender';s.textContent=sender;div.appendChild(s);}
+  const txt=document.createElement('span'); txt.textContent=text; div.appendChild(txt);
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  if(!chatOpen&&!mine&&!system){ chatUnread++; const btn=document.getElementById('chat-toggle'); if(btn)btn.classList.add('has-unread'); }
+}
+
+function sendChatMsg(){
+  const inp=document.getElementById('chat-input'); if(!inp)return;
+  const text=inp.value.trim(); if(!text)return;
+  inp.value='';
+  socket.emit('chat_msg',{text, name:myName});
+  addChatMsg(myName,text,true,false);
+}
+
+function sendQuickMsg(text){
+  socket.emit('chat_msg',{text, name:myName});
+  addChatMsg(myName,text,true,false);
+}
+
+socket.on('chat_msg',({text,name})=>{
+  if(name===myName) return; // already shown
+  addChatMsg(name,text,false,false);
+});
+
+// ملاحظة: الشات يحتاج إضافة في server.js:
+// socket.on('chat_msg', ({text, name}) => { io.to(socket.data.roomCode).except(socket.id).emit('chat_msg', {text, name}); });
+
+// Show chat toggle when game starts
+socket.on('game_started',()=>{
+  const ct=document.getElementById('chat-toggle');
+  if(ct) ct.style.display='flex';
+});
+
+/* ══ PITCH GLOW + TURN BADGE ══ */
 const _origRG=renderGame;
-renderGame=function(){const _was=isMyTurn;_origRG.apply(this,arguments);const pb=document.getElementById('pitch-bg');const tb=document.getElementById('turnIndicator');if(isMyTurn){pb&&pb.classList.add('my-turn-glow');tb&&tb.classList.add('my-turn-pulse');}else{pb&&pb.classList.remove('my-turn-glow');tb&&tb.classList.remove('my-turn-pulse');}};
+renderGame=function(){
+  _origRG.apply(this,arguments);
+  const pb=document.getElementById('pitch-bg');
+  const tb=document.getElementById('turnIndicator');
+  if(isMyTurn){ pb&&pb.classList.add('my-turn-glow'); tb&&tb.classList.add('my-turn-pulse'); }
+  else{ pb&&pb.classList.remove('my-turn-glow'); tb&&tb.classList.remove('my-turn-pulse'); }
+};
 
-socket.on('your_turn_start',()=>setTimeout(fxSweep,60));
+socket.on('your_turn_start',()=>{ setTimeout(fxSweep,60); addChatMsg('','⚡ '+(currentLang==='ar'?'دورك!':'Your turn!'),false,true); });
 
-const _wObs=new MutationObserver(()=>{const ws=document.getElementById('win-screen');if(ws&&ws.classList.contains('show'))setTimeout(fxConfetti,150);});
+/* ══ CONFETTI ON WIN ══ */
+const _wObs=new MutationObserver(()=>{ const ws=document.getElementById('win-screen'); if(ws&&ws.classList.contains('show'))setTimeout(fxConfetti,150); });
 _wObs.observe(document.getElementById('win-screen'),{attributes:true,attributeFilter:['class']});
 
+/* ══ SPECIAL FLASH + CHAT MSG ══ */
 const _origTS=trackSpecialPlayed;
-trackSpecialPlayed=function(card){_origTS.apply(this,arguments);if(!card)return;const fm={'Red Card':'red','Yellow Card':'gold','Offside':'cyan','Swap':'cyan','Contract':'gold','Loan':'cyan','Trash Player':'red','Cancel Order':'cyan'};const ft=fm[card.name];if(ft)fxFlash(ft);};
+trackSpecialPlayed=function(card){
+  _origTS.apply(this,arguments);
+  if(!card)return;
+  const fm={'Red Card':'red','Yellow Card':'gold','Offside':'cyan','Swap':'cyan','Contract':'gold','Loan':'cyan','Trash Player':'red','Cancel Order':'cyan'};
+  const ft=fm[card.name]; if(ft)fxFlash(ft);
+  // chat notification
+  const cardNameAr=t(card.name||'');
+  addChatMsg('',`⚡ ${myName} ${currentLang==='ar'?'لعب':'played'} ${currentLang==='ar'?cardNameAr:card.name}`,false,true);
+};
 
+/* ══ FLYING CARD — intercept place_card emit ══ */
+// We patch makeHandCard to track DOM el, then patch placeSelected to animate
+const _origMakeHandCard=makeHandCard;
+makeHandCard=function(card){
+  const el=_origMakeHandCard.apply(this,arguments);
+  // wrap onclick to capture element reference
+  if(isMyTurn){
+    const origOnclick=el.onclick;
+    el.onclick=function(e){
+      _lastSelectedCardEl=el;
+      _lastSelectedCard=card;
+      if(origOnclick)origOnclick.call(this,e);
+    };
+  }
+  return el;
+};
+
+const _origPlaceSelected=placeSelected;
+placeSelected=function(zone){
+  // validate first (let original run checks)
+  if(!selectedCard||!isMyTurn)return;
+  if(selectedCard.type==='special'){ _origPlaceSelected.apply(this,arguments); return; }
+
+  // Find the hand card DOM el
+  const handArea=document.getElementById('myHand');
+  let cardEl=null;
+  if(handArea&&selectedCard){
+    const cards=handArea.querySelectorAll('.hand-card');
+    cards.forEach(c=>{ if(c.classList.contains('selected'))cardEl=c; });
+  }
+
+  // determine target row
+  const tz=selectedCard.zone==='JOKER'?zone:selectedCard.zone;
+  const targetRowId=tz==='GK'?'my-row-GK':'my-row-'+tz;
+
+  // check limits first without emitting
+  const ZONE_LIMITS={GK:1,DEF:5,MID:4,ATK:3};
+  const fieldCount=Object.values(myField).reduce((s,z2)=>s+z2.length,0);
+  if(fieldCount>=11){showToast(t('fieldFull'),true);return;}
+  if(selectedCard.zone!=='JOKER'&&selectedCard.zone!==zone){showToast(t('mustPlaceCorrect',t(selectedCard.zone)),true);return;}
+  if(myField[tz]&&myField[tz].length>=ZONE_LIMITS[tz]){showToast(t('maxLimitInZone',t(tz),ZONE_LIMITS[tz]),true);return;}
+
+  // animate then emit
+  if(cardEl){
+    const cardId=selectedCard.id;
+    const sc=selectedCard;
+    selectedCard=null; // deselect visually
+    placedThisTurn++;
+    flyCardToField(cardEl, targetRowId, tz, ()=>{
+      socket.emit('place_card',{cardId,zone});
+    });
+  } else {
+    _origPlaceSelected.apply(this,arguments);
+  }
+};
+
+/* ══ CARD PLACED BOUNCE ON TARGET (after server confirms) ══ */
 const _origRMF2=renderMyFormation;
-renderMyFormation=function(){const bef={};['GK','DEF','MID','ATK'].forEach(z=>{bef[z]=(myField[z]||[]).length;});_origRMF2.apply(this,arguments);['GK','DEF','MID','ATK'].forEach(z=>{if((myField[z]||[]).length>bef[z])fxCardPlaced('my-row-'+z);});};
+renderMyFormation=function(){
+  const bef={};['GK','DEF','MID','ATK'].forEach(z=>{bef[z]=(myField[z]||[]).length;});
+  _origRMF2.apply(this,arguments);
+  ['GK','DEF','MID','ATK'].forEach(z=>{
+    if((myField[z]||[]).length>bef[z]){
+      const rowId=z==='GK'?'my-row-GK':'my-row-'+z;
+      const row=document.getElementById(rowId);
+      if(row){const cards=row.querySelectorAll('.form-card');const last=cards[cards.length-1];if(last){last.classList.remove('card-placed');void last.offsetWidth;last.classList.add('card-placed');}}
+    }
+  });
+};
 
 const _origROF2=renderOppFormation;
-renderOppFormation=function(){const opp=opponents[0];const bef={};if(opp)['GK','DEF','MID','ATK'].forEach(z=>{bef[z]=(opp.field[z]||[]).length;});_origROF2.apply(this,arguments);if(opp)['GK','DEF','MID','ATK'].forEach(z=>{if((opp.field[z]||[]).length>(bef[z]||0))fxCardPlaced('opp-row-'+z);});};
-
+renderOppFormation=function(){
+  const opp=opponents[0];const bef={};
+  if(opp)['GK','DEF','MID','ATK'].forEach(z=>{bef[z]=(opp.field[z]||[]).length;});
+  _origROF2.apply(this,arguments);
+  if(opp)['GK','DEF','MID','ATK'].forEach(z=>{
+    if((opp.field[z]||[]).length>(bef[z]||0)){
+      const row=document.getElementById('opp-row-'+z);
+      if(row){
+        const cards=row.querySelectorAll('.form-card');const last=cards[cards.length-1];
+        if(last){
+          last.classList.remove('card-placed');void last.offsetWidth;last.classList.add('card-placed');
+          const rr=last.getBoundingClientRect();
+          const zc={GK:'#f5a623',DEF:'#4a90d9',MID:'#27ae60',ATK:'#e74c3c',JOKER:'#8e44ad'};
+          spawnParticles(rr.left+rr.width/2,rr.top+rr.height/2,zc[z]||'#00e5ff',6);
+        }
+      }
+    }
+  });
+};
 
 </script>
 
-<!-- SLIDER VIDEO AD — شريط فيديو متمرر بيختفي لما تبدأ اللعبة -->
+<!-- CHAT TOGGLE BUTTON -->
+<button id="chat-toggle" onclick="toggleChat()" title="Chat">💬</button>
+
+<!-- CHAT BOX -->
+<div id="chat-box">
+  <div class="chat-header">
+    <span>💬 CHAT</span>
+    <button class="chat-close" onclick="toggleChat()">×</button>
+  </div>
+  <div id="chat-messages"></div>
+  <div class="chat-reactions">
+    <button class="react-btn" onclick="sendQuickMsg('👍')">👍</button>
+    <button class="react-btn" onclick="sendQuickMsg('😂')">😂</button>
+    <button class="react-btn" onclick="sendQuickMsg('🔥')">🔥</button>
+    <button class="react-btn" onclick="sendQuickMsg('😤')">😤</button>
+    <button class="react-btn" onclick="sendQuickMsg('🎯')">🎯</button>
+    <button class="react-btn" onclick="sendQuickMsg('GG')">GG</button>
+  </div>
+  <div class="chat-input-row">
+    <input id="chat-input" placeholder="اكتب رسالة..." maxlength="80"
+      onkeydown="if(event.key==='Enter')sendChatMsg()">
+    <button id="chat-send" onclick="sendChatMsg()">➤</button>
+  </div>
+</div>
+
+<!-- SLIDER VIDEO AD -->
 <div id="slider-ad-wrap" style="position:fixed;bottom:0;left:0;right:0;z-index:8000;display:block;">
 <script>
 (function(tous){
