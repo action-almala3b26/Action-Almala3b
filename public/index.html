@@ -371,6 +371,20 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000000; font-f
 .confetti-p { position:fixed; pointer-events:none; z-index:9998; animation:cfFall linear forwards; }
 @keyframes cfFall { 0%{transform:translateY(-10px) rotate(0deg);opacity:1;} 100%{transform:translateY(110vh) rotate(540deg);opacity:0;} }
 
+/* إخفاء زر الإغلاق في الإعلان الجانبي */
+#slider-ad-wrap button,
+#slider-ad-wrap [class*="close"],
+#slider-ad-wrap [class*="Close"],
+#slider-ad-wrap [id*="close"],
+#slider-ad-wrap [id*="Close"],
+#slider-ad-wrap [aria-label*="close"],
+#slider-ad-wrap [aria-label*="Close"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* ══ FLYING CARD ══ */
 .flying-card {
   position:fixed; z-index:9990; pointer-events:none;
@@ -1090,7 +1104,7 @@ function showVastAd(callback) {
         videoEl.play().catch(() => finish());
       });
 
-      let countdown = 5;
+      let countdown = 15;
       skipBtn.style.display = 'none';
       const countdownDiv = document.getElementById('vast-skip-countdown');
       const skipLblEl = document.getElementById('vast-skip-label-text');
@@ -2473,12 +2487,9 @@ function sendQuickMsg(text){
 }
 
 socket.on('chat_msg',({text,name})=>{
-  if(name===myName) return; // already shown
+  if(name===myName) return;
   addChatMsg(name,text,false,false);
 });
-
-// ملاحظة: الشات يحتاج إضافة في server.js:
-// socket.on('chat_msg', ({text, name}) => { io.to(socket.data.roomCode).except(socket.id).emit('chat_msg', {text, name}); });
 
 // Show chat toggle when game starts
 socket.on('game_started',()=>{
