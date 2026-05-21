@@ -701,6 +701,14 @@ io.on('connection', (socket) => {
     broadcastState(room);
   });
 
+  // CHAT
+  socket.on('chat_msg', ({ text, name }) => {
+    const code = socket.data.roomCode;
+    if (!code || !rooms[code]) return;
+    if (!text || text.length > 100) return;
+    socket.to(code).emit('chat_msg', { text, name });
+  });
+
   // DISCONNECT
   socket.on('disconnect', () => {
     const code = socket.data.roomCode;
